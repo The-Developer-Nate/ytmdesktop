@@ -1,17 +1,18 @@
 <script setup lang="ts">
-import { ArrowLeftIcon, Bug } from 'lucide-vue-next';
+import { ArrowLeftIcon, Bug, MenuIcon } from 'lucide-vue-next';
 import { ref, onMounted } from 'vue';
 import MinIcon from './assets/icons/min-window.svg';
 import MaxIcon from './assets/icons/max-window.svg';
 import CloseIcon from './assets/icons/close.svg';
 import SearchBar from './components/SearchBar.vue';
 import ytmStyles from './assets/ytm-styles.css?inline';
-import ytmScripts from './assets/ytm-scripts.js?raw';
 
 const api = window.api;
 
-const webview = ref<Electron.WebviewTag | null>(null);
+const webview = ref<any | null>(null);
 const canGoBack = ref(false);
+const userLoggedIn = ref(false);
+const userIcon = ref('');
 
 const handleSearch = (query: string) => {
   if (webview.value && query) {
@@ -52,16 +53,23 @@ onMounted(async () => {
   cv.addEventListener('dom-ready', () => {
     updateState();
     cv.insertCSS(ytmStyles);
-    cv.executeJavaScript(ytmScripts);
-    // Send test message
-    setTimeout(() => {
-      cv.send('ytm-enhanced-message', 'Hello from Electron!');
-    }, 2000);
   });
   cv.addEventListener('did-navigate-in-page', updateState);
   cv.addEventListener('console-message', (e: any) => {
-    console.log('[Webview Console]:', e.message);
+    console.log('[YTM Webview]', e.message);
   });
+
+  // Use shared variables instead of direct IPC
+  if (api.shared) {
+    api.shared.onUpdate((key, value) => {
+      console.log(`[App] Received shared update: ${key} = ${value}`);
+      if (key === 'user-logged-in') {
+        userLoggedIn.value = value;
+      } else if (key === 'user-icon') {
+        userIcon.value = value;
+      }
+    });
+  }
 });
 </script>
 
@@ -70,20 +78,32 @@ onMounted(async () => {
     <!-- Top Toolbar -->
     <div id="toolbar" class="flex items-center px-2 h-12 shrink-0 bg-black select-none relative">
       <!-- Back Button -->
-      <div
-        class="flex items-center gap-1 no-drag transition-all duration-500 ease-in-out overflow-hidden"
-        :class="[
-          canGoBack
-            ? 'max-w-10 opacity-100 mr-2 translate-x-0'
-            : 'max-w-0 opacity-0 -translate-x-2.5 mr-0 pointer-events-none'
-        ]"
-      >
-        <button class="btn btn-sm btn-ghost btn-square rounded text-xs" @click="goBack">
-          <arrow-left-icon class="w-4 h-4" />
-        </button>
-      </div>
+      <div class="flex items-center gap-0.5">
+        <div
+          class="flex items-center gap-1 no-drag transition-all duration-500 ease-in-out overflow-hidden"
+          :class="[
+            canGoBack
+              ? 'max-w-10 opacity-100 translate-x-0'
+              : 'max-w-0 opacity-0 -translate-x-2.5 mr-0 pointer-events-none'
+          ]"
+        >
+          <button class="btn btn-sm btn-square rounded-l-full text-xs" @click="goBack">
+            <arrow-left-icon class="w-4 h-4" />
+          </button>
+        </div>
 
-      <div class="text-sm transition-all duration-500 ease-in-out ml-2">YouTube Music</div>
+        <button
+          :class="{
+            'btn btn-square btn-sm transition-all duration-500 ease-in-out text-left': true,
+            'rounded-l-full': !canGoBack
+          }"
+          @click="api.shared.call('ytm.toggleGuide')"
+        >
+          <MenuIcon class="w-4 h-4" />
+        </button>
+
+        <button class="btn btn-sm rounded-r-full">YouTube Music</button>
+      </div>
 
       <!-- Spacer -->
       <div class="flex-1"></div>
@@ -98,25 +118,42 @@ onMounted(async () => {
       <!-- Window Controls -->
       <div class="flex items-center no-drag gap-1">
         <button
-          class="btn btn-sm btn-ghost btn-square rounded"
+          v-if="!userLoggedIn"
+          class="btn btn-sm rounded-full"
+          @click="api.shared.call('ytm.signIn')"
+        >
+          Sign In
+        </button>
+        <button
+          v-else
+          class="btn btn-circle btn-sm overflow-clip"
+          @click="api.shared.call('ytm.openSettings')"
+        >
+          <img :src="userIcon" />
+        </button>
+
+        <button
+          class="btn btn-sm btn-square rounded-full"
           title="Toggle DevTools"
           @click="toggleDevTools"
         >
           <Bug class="w-4 h-4" />
         </button>
 
-        <button class="btn btn-sm btn-ghost btn-square rounded" @click="minimize">
-          <MinIcon class="w-4 h-4" />
-        </button>
-        <button class="btn btn-sm btn-ghost btn-square rounded" @click="maximize">
-          <MaxIcon class="w-4 h-4" />
-        </button>
-        <button
-          class="btn btn-sm btn-ghost btn-square hover:bg-red-500 hover:text-white rounded"
-          @click="close"
-        >
-          <CloseIcon class="w-4 h-4" />
-        </button>
+        <div class="flex items-center gap-0.5">
+          <button class="btn btn-sm btn-square rounded-l-full" @click="minimize">
+            <MinIcon class="w-4 h-4" />
+          </button>
+          <button class="btn btn-sm btn-square" @click="maximize">
+            <MaxIcon class="w-4 h-4" />
+          </button>
+          <button
+            class="btn btn-sm btn-square hover:bg-red-500 hover:text-white rounded-full rounded-l-none"
+            @click="close"
+          >
+            <CloseIcon class="w-4 h-4" />
+          </button>
+        </div>
       </div>
     </div>
 
@@ -125,7 +162,7 @@ onMounted(async () => {
       ref="webview"
       src="https://music.youtube.com"
       class="flex-1 w-full"
-      preload="./ytm-preload.js"
+      :preload="api.ytm.preloadPath"
     ></webview>
   </div>
 </template>

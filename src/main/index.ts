@@ -6,12 +6,13 @@ import icon_ico from '../../resources/icon.ico?asset';
 import windowBackend from './windowBackend';
 import youtubeBackend from './youtubeBackend';
 import appBackend from './appBackend';
+import initIpcHub from './ipcHub';
 
 function createWindow(): void {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     width: 900,
-    minWidth: 770,
+    minWidth: 810,
     height: 670,
     show: false,
     autoHideMenuBar: true,
@@ -36,6 +37,7 @@ function createWindow(): void {
   windowBackend();
   youtubeBackend();
   appBackend();
+  initIpcHub();
 
   // HMR for renderer base on electron-vite cli.
   // Load the remote URL for development or the local html file for production.

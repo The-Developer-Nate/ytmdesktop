@@ -1,14 +1,37 @@
 #nav-bar-background,
 #nav-bar-divider,
 ytmusic-cast-button,
-ytmusic-search-box {
+ytmusic-search-box,
+ytmusic-settings-button,
+ytmusic-nav-bar a.sign-in-link,
+#guide-button,
+ytmusic-logo,
+#guide-spacer,
+#mini-guide-spacer {
   display: none !important;
+}
+
+ytmusic-nav-bar {
+  pointer-events: none !important;
 }
 
 #guide-wrapper,
 #mini-guide-background {
   opacity: 100% !important;
-  background-color: rgba(0, 0, 0, 0.2) !important;
+  background-color: rgba(0, 0, 0, 0.75) !important;
   backdrop-filter: blur(16px) !important;
   border-right: none !important;
+}
+
+tp-yt-iron-dropdown:has(*.ytmusicMultiPageMenuRendererHostAccountMenu) {
+  position: fixed !important;
+  left: 100% !important;
+  transform: translateX(-100%) !important;
+}
+
+ytmusic-multi-page-menu-renderer.ytmusicMultiPageMenuRendererHostAccountMenu {
+  background-color: rgba(0, 0, 0, 0.75) !important;
+  backdrop-filter: blur(16px) !important;
+  border-top-left-radius: 0 !important;
+  border-top-right-radius: 0 !important;
 }

@@ -1,9 +1,13 @@
 import { contextBridge } from 'electron';
 import { electronAPI } from '@electron-toolkit/preload';
+import { createSharedApi } from './sharedApi';
+import { join } from 'path';
 
 // Custom APIs for renderer
 const api = {
+  shared: createSharedApi(),
   ytm: {
+    preloadPath: join(__dirname, 'ytm.js'),
     search: (query: string) => {
       return electronAPI.ipcRenderer.invoke('ytm.search', query);
     }
