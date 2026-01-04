@@ -1,0 +1,14 @@
+#nav-bar-background,
+#nav-bar-divider,
+ytmusic-cast-button,
+ytmusic-search-box {
+  display: none !important;
+}
+
+#guide-wrapper,
+#mini-guide-background {
+  opacity: 100% !important;
+  background-color: rgba(0, 0, 0, 0.2) !important;
+  backdrop-filter: blur(16px) !important;
+  border-right: none !important;
+}

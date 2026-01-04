@@ -1,0 +1,35 @@
+@import 'tailwindcss';
+@import 'material-symbols';
+@plugin "daisyui" {
+  themes: black;
+}
+
+#toolbar {
+  -webkit-app-region: drag;
+
+  border-bottom: 1px solid #292929;
+}
+
+#toolbar button {
+  @apply transition-all duration-250 ease-in-out;
+  -webkit-app-region: no-drag;
+}
+
+.hidden-btn {
+  opacity: 0;
+  transform: translateX(-10px);
+  width: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin: 0 !important;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+#toolbar * {
+  outline: none;
+}
+
+.no-drag {
+  -webkit-app-region: no-drag;
+}
