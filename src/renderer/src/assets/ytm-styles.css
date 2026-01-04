@@ -7,7 +7,8 @@ ytmusic-nav-bar a.sign-in-link,
 #guide-button,
 ytmusic-logo,
 #guide-spacer,
-#mini-guide-spacer {
+#mini-guide-spacer,
+#guide-renderer .guide-nav {
   display: none !important;
 }
 
