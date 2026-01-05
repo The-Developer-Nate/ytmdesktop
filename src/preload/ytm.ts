@@ -25,11 +25,58 @@ function updateUserIcon() {
   }
 }
 
+// Inject script to access main world state (video thumbnails)
+function injectMainWorldScript() {
+  const script = document.createElement('script');
+  script.textContent = `
+    (() => {
+      function getThumbnail() {
+        const app = document.querySelector('ytmusic-app');
+        if (!app || typeof app.getState !== 'function') return;
+        const state = app.getState();
+        const thumbnails = state?.player?.playerResponse?.videoDetails?.thumbnail?.thumbnails;
+        if (!thumbnails) return;
+
+        let maxResW = 0;
+        let thumbnailUrl = '';
+        for (const thumbnail of thumbnails) {
+          if (thumbnail.width > maxResW) {
+            maxResW = thumbnail.width;
+            thumbnailUrl = thumbnail.url;
+          }
+        }
+        if (thumbnailUrl) {
+          window.postMessage({ type: 'YTM_BACKGROUND_UPDATE', url: thumbnailUrl }, '*');
+        }
+      }
+
+      const observer = new MutationObserver(getThumbnail);
+      observer.observe(document.body, { childList: true, subtree: true });
+      // Initial check
+      getThumbnail();
+    })();
+  `;
+  document.head.appendChild(script);
+}
+
+// Listen for background updates from main world
+window.addEventListener('message', (event) => {
+  if (event.data?.type === 'YTM_BACKGROUND_UPDATE' && event.data.url) {
+    document.documentElement.style.setProperty(
+      '--ytmextended-background-image',
+      `url("${event.data.url}")`
+    );
+  }
+});
+
 function bodyUpdate() {
   updateUserIcon();
+  // updateBackgroundImage now handled via injected script + message
 }
 
 window.addEventListener('DOMContentLoaded', () => {
+  injectMainWorldScript();
+
   const navBar = document.querySelector('ytmusic-nav-bar');
 
   if (navBar) {

@@ -17,9 +17,10 @@ ytmusic-nav-bar {
 }
 
 #guide-wrapper,
-#mini-guide-background {
+#mini-guide-background,
+ytmusic-player-bar {
   opacity: 100% !important;
-  background-color: rgba(0, 0, 0, 0.75) !important;
+  background-color: rgba(0, 0, 0, 0) !important;
   backdrop-filter: blur(16px) !important;
   border-right: none !important;
 }
@@ -35,4 +36,52 @@ ytmusic-multi-page-menu-renderer.ytmusicMultiPageMenuRendererHostAccountMenu {
   backdrop-filter: blur(16px) !important;
   border-top-left-radius: 0 !important;
   border-top-right-radius: 0 !important;
+}
+
+ytmusic-chip-cloud-chip-renderer[chip-style='STYLE_LARGE_TRANSLUCENT_AND_SELECTED_WHITE'] {
+  padding: 0 !important;
+}
+
+#chips {
+  position: relative !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+}
+
+* {
+  --ytmusic-nav-bar-height: 12px !important;
+}
+
+ytmusic-player-page div.content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: var(--ytmextended-background-image) !important;
+  background-size: cover !important;
+  filter: saturate(2.25) blur(64px) brightness(0.6) !important;
+}
+
+ytmusic-player-page div.content {
+  padding-top: var(--ytmusic-nav-bar-height) !important;
+}
+
+ytmusic-player {
+  transform: scale(0.675) !important;
+  border-radius: 24px !important;
+  overflow: clip !important;
+}
+
+ytmusic-player-page #side-panel {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+  box-shadow: 0px 0px 50px 5px rgba(0, 0, 0, 1) !important;
+  backdrop-filter: blur(64px) !important;
+  border-radius: 24px !important;
+}
+
+ytmusic-player-page {
+  left: 0 !important;
+  width: 100% !important;
 }

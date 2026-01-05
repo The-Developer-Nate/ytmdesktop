@@ -94,15 +94,13 @@ onMounted(async () => {
 
         <button
           :class="{
-            'btn btn-square btn-sm transition-all duration-500 ease-in-out text-left': true,
-            'rounded-l-full': !canGoBack
+            'btn btn-square btn-sm transition-all duration-500 ease-in-out text-left rounded-full': true,
+            'rounded-l-none': canGoBack
           }"
           @click="api.shared.call('ytm.toggleGuide')"
         >
           <MenuIcon class="w-4 h-4" />
         </button>
-
-        <button class="btn btn-sm rounded-r-full">YouTube Music</button>
       </div>
 
       <!-- Spacer -->

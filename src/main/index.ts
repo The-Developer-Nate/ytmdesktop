@@ -34,6 +34,21 @@ function createWindow(): void {
     return { action: 'deny' };
   });
 
+  // Strip Content-Security-Policy/Trusted-Types to allow script injection
+  mainWindow.webContents.session.webRequest.onHeadersReceived((details, callback) => {
+    const responseHeaders = details.responseHeaders || {};
+    // Remove the headers that prevent script injection
+    delete responseHeaders['content-security-policy'];
+    delete responseHeaders['content-security-policy-report-only'];
+    delete responseHeaders['require-trusted-types-for'];
+    delete responseHeaders['trusted-types'];
+
+    callback({
+      responseHeaders,
+      statusLine: details.statusLine
+    });
+  });
+
   windowBackend();
   youtubeBackend();
   appBackend();
