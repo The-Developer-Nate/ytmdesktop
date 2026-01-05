@@ -61,7 +61,7 @@ ytmusic-player-page div.content::before {
   height: 100%;
   background-image: var(--ytmextended-background-image) !important;
   background-size: cover !important;
-  filter: saturate(2.25) blur(64px) brightness(0.6) !important;
+  filter: saturate(2.25) blur(64px) brightness(0.25) !important;
 }
 
 ytmusic-player-page div.content {
@@ -75,10 +75,7 @@ ytmusic-player {
 }
 
 ytmusic-player-page #side-panel {
-  background-color: rgba(0, 0, 0, 0.6) !important;
-  box-shadow: 0px 0px 50px 5px rgba(0, 0, 0, 1) !important;
-  backdrop-filter: blur(64px) !important;
-  border-radius: 24px !important;
+  z-index: 5 !important;
 }
 
 ytmusic-player-page {
