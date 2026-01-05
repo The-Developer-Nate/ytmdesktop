@@ -14,15 +14,29 @@ const canGoBack = ref(false);
 const userLoggedIn = ref(false);
 const userIcon = ref('');
 
-const handleSearch = (query: string) => {
+const handleSearch = async (query: string) => {
   if (webview.value && query) {
-    webview.value.loadURL(`https://music.youtube.com/search?q=${encodeURIComponent(query)}`);
+    try {
+      await webview.value.loadURL(
+        `https://music.youtube.com/search?q=${encodeURIComponent(query)}`
+      );
+    } catch (error: any) {
+      if (error.code !== 'ERR_ABORTED') {
+        console.error('Failed to load search URL:', error);
+      }
+    }
   }
 };
 
-const handleNavigate = (url: string) => {
+const handleNavigate = async (url: string) => {
   if (webview.value && url) {
-    webview.value.loadURL(url);
+    try {
+      await webview.value.loadURL(url);
+    } catch (error: any) {
+      if (error.code !== 'ERR_ABORTED') {
+        console.error('Failed to navigate:', error);
+      }
+    }
   }
 };
 
